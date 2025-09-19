@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react'
+import './Home.scss';
 
 export default function Home() {
+
+    let userInfo = false;
 
     useEffect(() => {
         const apiTest = async() => {
@@ -18,7 +21,17 @@ export default function Home() {
 
   return (
     <div className="home">
-        <h1>Home</h1>
+        <div className="home__content">
+            <h1>GamifyLife</h1>
+
+            <div className="home__profile">
+                {userInfo ? (
+                    <img src={userInfo.photo} alt="profile-pic" />
+                ) : (
+                    <p>No profile pic</p>
+                )}
+            </div>
+        </div>
     </div>
   )
 }

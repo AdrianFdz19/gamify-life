@@ -1,20 +1,29 @@
 import React from 'react';
-import { useGoogleLogin } from '@react-oauth/google';
+import { GoogleLogin } from '@react-oauth/google';
 
-function GoogleLoginButton() {
-    const login = useGoogleLogin({
-        onSuccess: tokenResponse => {
-            console.log(tokenResponse);
-            // Handle successful login, e.g., send token to backend for verification
-        },
-        onError: error => console.log('Login Failed:', error)
+function Login() {
+  const handleSuccess = async (credentialResponse: any) => {
+    console.log(credentialResponse);
+    // Aquí sí viene: credentialResponse.credential -> el id_token JWT
+    const idToken = credentialResponse.credential;
+
+    // Enviar al backend
+    const response = await fetch('http://localhost:3000/auth/google', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: idToken })
     });
+    const data = await response.json();
+    console.log('JWT interno:', data.token);
+  };
 
-    return (
-        <button onClick={() => login()}>
-            Sign in with Google
-        </button>
-    );
+  return (
+    <GoogleLogin
+      onSuccess={handleSuccess}
+      onError={() => console.log('Login Failed')}
+    />
+  );
 }
 
-export default GoogleLoginButton;
+
+export default Login;

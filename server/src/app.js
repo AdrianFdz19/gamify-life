@@ -1,12 +1,18 @@
 import express from 'express'
 import cors from 'cors'
 import { pool } from './config/databaseConfig.js';
+import auth from './auth/authRoutes.js';
 
 export const app = express();
 
 /* Middlewares base */
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173', 
+  credentials: true                
+}));
+
+app.use('/auth', auth);
 
 /* Ruta principal */
 app.get('/', (req, res) => {
