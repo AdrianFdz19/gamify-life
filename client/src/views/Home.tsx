@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppProvider';
 import './Home.scss';
 
 export default function Home() {
-    const { user, isLoading } = useAppContext();
+    const { user, isLoading, logout } = useAppContext();
 
     useEffect(() => {
         if (user?.name) {
@@ -20,6 +20,7 @@ export default function Home() {
         <div className="home">
             <div className="home__content">
                 <h1>GamifyLife</h1>
+                <button onClick={() => logout()}  >Logout</button>
                 <h2>{user?.name}</h2>
                     <div className="home__profile">
                         {user?.picture ? (

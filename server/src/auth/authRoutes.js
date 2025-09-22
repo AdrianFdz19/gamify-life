@@ -130,5 +130,15 @@ auth.post("/refresh", async (req, res) => {
   }
 });
 
+// Logout
+auth.post('/logout', (req, res) => {
+  res.clearCookie('jwt', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+  });
+  return res.json({ message: 'Logout exitoso' });
+});
+
 
 export default auth;

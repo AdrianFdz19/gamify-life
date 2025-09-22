@@ -15,9 +15,9 @@ interface User {
 interface AppContextType {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
-  logout: () => void;
+  logout: () => Promise<void>;
   isLoading: boolean;
-  refreshToken: () => void;
+  refreshToken: () => Promise<User | null>;
 }
 
 // Creamos el contexto con un valor inicial vacío
@@ -75,25 +75,9 @@ export default function AppProvider({ children }: AppProviderProps) {
         console.log("El usuario activo es: ", user);
 
       } catch (error) {
+
         console.log("JWT inválido o expirado, intentando refresh…");
-
-        try {
-          // 2️⃣ Intento de refresh usando refresh_token guardado en backend
-          const refreshRes = await fetch("http://localhost:3000/auth/refresh", {
-            method: "POST",
-            credentials: "include",
-          });
-
-          if (!refreshRes.ok) throw new Error("Refresh fallido");
-
-          const { user } = await refreshRes.json();
-          setUser(user);
-          console.log("Refresh exitoso, usuario actualizado: ", user);
-
-        } catch (refreshError) {
-          console.log("Refresh fallido, usuario no autenticado.");
-          setUser(null);
-        }
+        await refreshToken();
 
       } finally {
         setIsLoading(false); // ✅ siempre quitamos el loading
@@ -103,9 +87,16 @@ export default function AppProvider({ children }: AppProviderProps) {
     authenticate();
   }, []);
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user"); // 1️⃣ Borra el usuario del localStorage
+  const logout = async () => {
+    try {
+      await fetch('http://localhost:3000/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+      setUser(null); // limpiar contexto
+    } catch (err) {
+      console.error('Error haciendo logout', err);
+    }
   };
 
   const data = { user, setUser, logout, isLoading, refreshToken };
