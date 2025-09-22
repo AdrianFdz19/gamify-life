@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom'
 import Home from './views/Home'
 import Login from './views/auth/Login'
 import AuthCallback from './components/AuthCallback'
+import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
 
@@ -10,9 +11,14 @@ function App() {
     <>
       <div className="app">
         <Routes>
-          <Route path='/' element={<Home />} ></Route>
+
           <Route path='/login' element={<Login />} ></Route>
-          <Route path="/auth/callback" element={<AuthCallback />} /> 
+          <Route path="/auth/callback" element={<AuthCallback />} />
+
+          <Route path='/' element={<ProtectedRoute />} >
+            <Route index element={<Home />} ></Route>
+          </Route>
+
         </Routes>
       </div>
     </>

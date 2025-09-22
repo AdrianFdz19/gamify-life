@@ -7,10 +7,11 @@ config();
 
 const auth = express.Router();
 
+// Login con google
 auth.post('/google', async (req, res) => {
   const { code } = req.body; // ahora recibimos el code del frontend
   console.log(code);
-  
+
   if (!code) return res.status(400).json({ message: 'Code es requerido' });
 
   try {
@@ -69,12 +70,65 @@ auth.post('/google', async (req, res) => {
     );
 
     // 6. Enviar JWT al frontend
-    res.json({ token: tokenJWT, user: user.rows[0] });
+    res.cookie("jwt", tokenJWT, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 días
+    });
+    res.json({ user: user.rows[0] });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error autenticando con Google' });
   }
 });
+
+// Refresh del token
+auth.post("/refresh", async (req, res) => {
+  try {
+    const { jwt: oldJwt } = req.cookies;
+    if (!oldJwt) return res.status(401).json({ message: "No hay token" });
+
+    let payload;
+    try {
+      payload = jwt.verify(oldJwt, process.env.JWT_SECRET, { ignoreExpiration: true });
+    } catch (err) {
+      return res.status(401).json({ message: "Token inválido" });
+    }
+
+    const userRes = await pool.query(
+      "SELECT * FROM users WHERE id = $1",
+      [payload.id]
+    );
+    if (userRes.rows.length === 0) return res.status(404).json({ message: "Usuario no encontrado" });
+
+    let refreshToken = userRes.rows[0].refresh_token;
+
+    // Opcional: renovar info con Google usando el refresh_token guardado en DB
+    // Aquí podrías pedir nuevo id_token con el refresh_token de Google.
+
+    // Generar nuevo JWT interno
+    const newJwt = jwt.sign(
+      { id: userRes.rows[0].id, email: userRes.rows[0].email },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.cookie("jwt", newJwt, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.json({ user: userRes.rows[0] });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error en refresh" });
+  }
+});
+
 
 export default auth;

@@ -1,37 +1,35 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react';
+import { useAppContext } from '../context/AppProvider';
 import './Home.scss';
 
 export default function Home() {
-
-    let userInfo = false;
+    const { user, isLoading } = useAppContext();
 
     useEffect(() => {
-        const apiTest = async() => {
-            try {
-                const response = await fetch(`http://localhost:3000/test`);
-                const data = await response.json();
-                console.log(data.message);
-            } catch(err) {
-                console.error(err);
-                alert('Hubo un error al intentar conectarse al servidor.');
-            }
-        };
-        apiTest();
-    }, []);
+        if (user?.name) {
+            console.log(user.picture);
 
-  return (
-    <div className="home">
-        <div className="home__content">
-            <h1>GamifyLife</h1>
+        }
+    }, [user]);
 
-            <div className="home__profile">
-                {userInfo ? (
-                    <img src={userInfo.photo} alt="profile-pic" />
-                ) : (
-                    <p>No profile pic</p>
-                )}
+    if (isLoading) {
+        return <p>Cargando usuario…</p>;
+    }
+
+    return (
+        <div className="home">
+            <div className="home__content">
+                <h1>GamifyLife</h1>
+                <h2>{user?.name}</h2>
+                    <div className="home__profile">
+                        {user?.picture ? (
+                            <img src={user?.picture} alt="profile-pic" />
+                        ) : (
+                            <p>No profile pic</p>
+                        )}
+                    </div>
             </div>
         </div>
-    </div>
-  )
+    );
 }
+

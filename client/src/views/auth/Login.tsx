@@ -1,11 +1,7 @@
 import React, { useEffect } from "react";
 
 export default function SignUp() {
-
-  /* const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-  const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
-
-  console.log(clientId, redirectUri); */
+/*  */
   const handleGoogleLogin = () => {
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
     const redirectUri = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
@@ -27,27 +23,6 @@ export default function SignUp() {
     // Redirige al usuario a Google para que acepte permisos
     window.location.href = authUrl;
   };
-
-  // Verifica si ya hay sesión activa en el backend
-  /* useEffect(() => {
-    const authenticateMe = async () => {
-      try {
-        const response = await fetch('http://localhost:3000/users/me', {
-          method: 'GET',
-          credentials: 'include' // ⚠️ enviar cookies HTTPOnly
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          console.log('Usuario logueado:', result);
-        }
-      } catch (err) {
-        console.error('Error verificando sesión:', err);
-      }
-    };
-
-    authenticateMe();
-  }, []); */
 
   return (
     <div className="signup">

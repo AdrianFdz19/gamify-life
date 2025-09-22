@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useAppContext } from "../context/AppProvider";
 
 export default function AuthCallback() {
+  const {setUser} = useAppContext();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
@@ -21,7 +23,9 @@ export default function AuthCallback() {
         .then(res => res.json())
         .then(data => {
           console.log("Respuesta del backend:", data);
-          // Redirigir a home o dashboard
+
+          // Redirigir a home o dashboard y setear el usuario de una vez.
+          setUser(data.user);
           navigate("/");
         })
         .catch(err => console.error("Error en callback:", err));
