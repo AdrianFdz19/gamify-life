@@ -1,33 +1,39 @@
+@use '../main.scss' as *;
+
 .home {
-    /* border: 1px solid red; */
-    width: 100%;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    &__content {
-        width: 90%;
-        /* border: 1px solid blue; */
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-}
-
-.home__profile {
+  /* border: 1px solid red; */
+  width: 100%;
+  height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1rem;
 
-  img {
-    width: 96px;   // o 100px
-    height: 96px;
-    border-radius: 50%;
-    object-fit: cover;
-    display: block;
+  &__content {
+    width: 90%;
+    /* border: 1px solid blue; */
+    height: 100vh;
+    @include column;
+    width: 90;
+    max-width: 768px;
+    border: 1px solid gainsboro;
+  }
+
+  &__profile {
+    @include column;
+    margin-top: 1rem;
+    border: 1px solid gainsboro;
+    img {
+      width: 10rem; // o 100px
+      height: 10rem;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  &__progress {
+    border: 1px solid gainsboro;
+    width: 100%;
+    @include column;  
   }
 }
-
